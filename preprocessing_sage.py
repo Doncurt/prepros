@@ -1,7 +1,9 @@
 import pandas as pd
 import scipy as sp
 import numpy as np
-from sklearn.preprocessing
+from sklearn.preprocessing import Binarizer
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScale
 
 class preprocess(object):
     ''' Cleans and processes DataFrame including turning into binary and scaling. '''
@@ -24,8 +26,10 @@ class preprocess(object):
                 self.data = self.data.dropna()              # Drops every row with any occurrence of NaN
             elif droptype == "all":
                 self.data = self.data.dropna(how="all")     # Drops every row where all values are NaNs
+# TODO: Use string formatting to accept last char of 'thresh{}' as integer for threshold value
             elif droptype == "thresh2":
                 self.data = self.data.dropna(thresh=2)      # Drops every row where at least 2 values are NaNs
+# TODO: Use string formatting to accept last char of 'subs{}' as integer for subset value
             elif droptype == "subs1":
                 self.data = self.data.dropna(subset=[1])    # Drops every row that has NaNs in column at index 1
         else:
@@ -40,6 +44,7 @@ class preprocess(object):
         # ----------------------------------------------------------------------------------------------------
         # --------------------------------------- ZERO-VALUE FILTERING ---------------------------------------
         # ----------------------------------------------------------------------------------------------------
+# TODO: Verify integrity of zero-value filtering script separately from rest of _clean_dataset()
 
         # Let N be the hypothetical index of the column we wish to perform zero-value filtering.
         # Let 'M' be the hypothetical title of the column we wish to perform zero-value filtering.
@@ -75,34 +80,43 @@ class preprocess(object):
             this method works by taking arguments for the clices themseves, for v of this, any value that you want to be open( going to the end), must be declared as None
         '''
         if x1==None:                            # slicing until x2, slicing from x3 to x4
-            return self.data[:x2,x3:x4]
+            return self.data.values[:x2,x3:x4]
         elif x2== None:                         # slicing from x1 to the end, slcing from x3 to x4
-            return self.data[x1:,x3:x4]
+            return self.data.values[x1:,x3:x4]
         elif x3== None:                         # slicing from x1 to x2. slicing from the begining to x4
-            return self.data[x1:x2,:x4]
+            return self.data.values[x1:x2,:x4]
         elif x4 == None:                        # slicing from x1 to x2, slicing from x3 to end
-            return self.data[x1:x2,x3:]
+            return self.data.values[x1:x2,x3:]
         elif x1 ==None and x2== None:           # takes whole, slicing from x3 to x4
-            return self.data[:,x3:x4]
+            return self.data.values[:,x3:x4]
         elif x2== None and x3 == None:          # slicing from x1 to end, slicing from beggining to x4
-            return self.data[x1:,:x4]
-        elif x3== None and x4 == None:          # slicing x1 to x2 , slicing from begginign to end
-            return self.data[x1:x2,]
+            return self.data.values[x1:,:x4]
+        elif x3== None and x4 == None:          # slicing x1 to x2 , slicing from beginning to end
+            return self.data.values[x1:x2,:]
 
         else raise ValueError("One of the parameters")
 
-    def _setY_scalar(self,y1=None,y2=None,y3=None,y4=None):
-        ''' sets the y axis scaler for the y axis in the _scalar method'''
-        pass
+    def _setY_scalar(self, y1=None, y2=None, y3=None, y4=None):
+            ''' Sets the y axis scaler for the x axis in the _scalar method.
+                This method works by taking arguments for the slices themseves, any value that you want to be open (going to the end), must be declared as None.
+            '''
+            if y1==None:                            # slicing until y2, slicing from y3 to y4
+                return self.data.values[:y2,y3:y4]
+            elif y2== None:                         # slicing from y1 to the end, slcing from y3 to y4
+                return self.data.values[y1:,y3:y4]
+            elif y3== None:                         # slicing from y1 to y2. slicing from the begining to x4
+                return self.data.values[y1:y2,:y4]
+            elif y4 == None:                        # slicing from y1 to y2, slicing from y3 to end
+                return self.data.values[y1:y2,y3:]
+            elif y1 ==None and y2== None:           # takes whole, slicing from y3 to y4
+                return self.data.values[:,y3:y4]
+            elif y2== None and y3 == None:          # slicing from y1 to end, slicing from begining to y4
+                return self.data.values[y1:,:y4]
+            elif y3== None and y4 == None:          # slicing y1 to y2 , slicing from beginign to end
+                return self.data.values[y1:y2,:]
 
-    def _scaler(self):
-        '''inputs for data frame slicing are as follows
-
-           x1= starting x axis slice, could be a list? BINGO
-           x2= ending x axis slice
-           y1= staring y axis slice
-           y2= ending y axis slice
-           EXAMPLE
-           X = data[:,0:8]
+    def _rescaler(self):
+        '''
+        rescales data using the Miniscaler for  KNN and other machine learning algorithms
         '''
         dataset_values = self.data.values       #Takes the data fram of the object, takes the vales as the values for the x and y axis
