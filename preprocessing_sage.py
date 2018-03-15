@@ -1,6 +1,7 @@
 import pandas as pd
 import scipy as sp
 import numpy as np
+from numpy import random
 from sklearn.preprocessing import Binarizer
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScale
@@ -141,3 +142,37 @@ class preprocess(object):
         Rescales data using the Miniscaler for KNN and other machine learning algorithms.
         '''
         dataset_values = self.data.values       #Takes the dataframe of the object, takes the vales as the values for the x and y axis
+        pass
+
+
+    '''
+    SAMPLING AND NORMAL DISTRIBUTION(USING CLT)
+    '''
+
+
+    def _sample(dataset, n=30):
+    """Grabs a random subsample of size 'n' from dataset.
+    Outputs the mean of the subsample."""
+    #deClare as a normal array first for ease of operations
+    sample_list = []
+
+    for samp_data in range(n):
+        random_number = random.choice(dataset)
+        sample_list.append(random_number)
+
+    sample_mean = np.mean(sample_list)
+    return sample_mean
+
+    def _sample_distribution(dataset, size=100):
+    """Creates a dataset of subsample means.  The length of the dataset is specified by the 'size'
+    keyword argument. Should return the entire sample distribution as a numpy array.  """
+    #for later use if needed
+    sample_set= dataset
+    #declare as a normal array first since np.array doesnt deal with append method and we may need this
+    sample_dist_array = []
+    #based on entered loop size appends that many means to the array
+    for i in range(size):
+        sample_dist_array.append(_sample(sample_set))
+    #may be unnecesary but keeps me organized
+    sample_dist = sample_dist_array
+    return sample_dist
